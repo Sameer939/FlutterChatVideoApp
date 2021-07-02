@@ -46,7 +46,9 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   getUserInfo() async{
+    Constants.myEmail = await HelperFunctions.getUserEmailSharedPreference();
     Constants.myName = await HelperFunctions.getUserNameSharedPreference();
+    print(Constants.myEmail.toString());
     databaseMethods.getChatRooms(Constants.myName)
     .then((value){
       setState(() {
@@ -67,7 +69,7 @@ class _ChatRoomState extends State<ChatRoom> {
             onPressed: () {},
           ),
         title: Center(
-          child: Text("Chats", style: TextStyle(
+          child: Text("Chats " , style: TextStyle(
             fontSize: 28.0, 
             fontWeight: FontWeight.bold
             ),
@@ -123,25 +125,36 @@ class ChatRoomsTile extends StatelessWidget {
           builder: (context) => ConversationScreen(chatRoomId)
           ));
       },
-      child: Container(
-        color: Colors.black26,
-        padding: EdgeInsets.symmetric(horizontal: 24,vertical: 16),
-        child: Row(
-          children: [
-            Container(
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(40),
-                ),
-              child: Text("${userName.substring(0,1).toUpperCase()}",
-              style: mediumTextStyle()),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 24,vertical: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              color: Colors.black,
             ),
-            SizedBox(width: 8,),
-            Text(userName, style: mediumTextStyle(),),
-          ],),
+            child: Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(40),
+                    ),
+                  child: Text("${userName.substring(0,1).toUpperCase()}",
+                  style: mediumTextStyle()),
+                ),
+                SizedBox(width: 8,),
+                Text(userName, style: mediumTextStyle(),),
+              ],
+              ),
+          ),
+          Divider(
+            color: Colors.grey,
+          )
+        ],
       ),
     );
   }

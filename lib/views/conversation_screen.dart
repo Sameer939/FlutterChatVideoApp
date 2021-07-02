@@ -19,22 +19,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
   // var MessagingTo = getChatRoomId(a, b)
 
   Widget ChatMessageList(){
-    return StreamBuilder(
-      stream: chatMessageStream,
-      builder: (context, snapshot){
-        return snapshot.hasData ? ListView.builder(
-          itemCount: snapshot.data.docs.length,
-          itemBuilder: (context,index){
-            // print("length hai bhai yeh = ${snapshot.data.docs.length}");
-            
-            return MessageTile(
-              snapshot.data.docs[index]["message"],
-              Constants.myName == snapshot.data.docs[index]["sendBy"],
-              );
-          }
-        ) :Container() ;
-      }
+    return Container(
+      margin: EdgeInsets.only(bottom: 80.0),
+      child: StreamBuilder(
+        stream: chatMessageStream,
+        builder: (context, snapshot){
+          return snapshot.hasData ? ListView.builder(
+            reverse: true,
+            itemCount: snapshot.data.docs.length,
+            itemBuilder: (context,index){
+              // print("length hai bhai yeh = ${snapshot.data.docs.length}");
+              
+              return MessageTile(
+                snapshot.data.docs[index]["message"],
+                Constants.myName == snapshot.data.docs[index]["sendBy"],
+                snapshot.data.docs[index]["time"],
+                );
+            }
+          ) :Container() ;
+        }
 
+      ),
     );
   }
   sendMessage(){
@@ -65,7 +70,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       appBar: AppBar(
         title: 
           Container(
-            // // alignment: Alignment.centerRight,
             padding: EdgeInsets.symmetric(horizontal: 85,vertical: 10),
             child: Text(widget.chatRoomId.toString()
             .replaceAll("_", "")
@@ -76,6 +80,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
               ),
             ),
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.more_horiz),
+              iconSize: 30.0,
+              color: Colors.white,
+              onPressed: (){
+
+              },
+            )
+          ],
       ),
       body: Container(
         child: Stack(
@@ -134,7 +148,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
 class MessageTile extends StatelessWidget {
   final String message;
   final bool isSendByMe;
-  MessageTile(this.message,this.isSendByMe);
+  int sentTime;
+  MessageTile(this.message,this.isSendByMe,this.sentTime);
+
+  timeData(int time){
+    return  DateTime
+    .fromMicrosecondsSinceEpoch(sentTime)
+    .toString()
+    .substring(11,16);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -175,10 +199,21 @@ class MessageTile extends StatelessWidget {
                   bottomRight: Radius.circular(23)
                 )
             ),
-            child: Text(message,style: TextStyle(
-                color: Colors.white, fontSize: 16
-                 ),
-                ),
+            child: Column(
+              crossAxisAlignment :CrossAxisAlignment.end,
+              children: [
+                  Text(message,style: TextStyle(
+                      color: Colors.white, fontSize: 16
+                     ),
+                    ),
+                SizedBox(height: 6.0,),
+                  Text(timeData(sentTime),style: TextStyle(
+                      color: Colors.white, fontSize: 11
+                    ),
+                  ),
+                
+              ],
+            ),
         ),
       ),
     );
